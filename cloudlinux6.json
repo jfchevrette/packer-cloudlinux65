@@ -1,0 +1,42 @@
+{
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "script": "scripts/cloudlinux.sh"
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "script": "scripts/cleanup.sh"
+    }
+  ],
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "http://repo.cloudlinux.com/cloudlinux/6.5/iso/x86_64/CloudLinux-6.5-x86_64-netboot.iso",
+      "iso_checksum_type": "md5",
+      "iso_checksum": "707b544236e30c8db6897e2f33c8ad2c",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": 5000,
+      "guest_os_type": "RedHat_64",
+      "headless": false,
+      "http_directory": "http",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
+      "vm_name": "packer-cloudlinux6-x86_64"
+    }
+  ],
+  "post-processors": [
+    {
+      "output": "builds/VirtualBox-cloudlinux6.box",
+      "type": "vagrant"
+    }
+  ]
+}
